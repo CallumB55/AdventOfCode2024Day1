@@ -6,8 +6,11 @@ package com.callumhobby.adventofcode2024day1;
 import java.io.File;
 import java.util.Scanner;
 import java.io.FileNotFoundException;
-import java.util.TreeSet;
-import java.util.Iterator;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -17,32 +20,32 @@ public class AdventOfCode2024Day1 {
 
     public static void main(String[] args) {
         File file = new File("src\\main\\java\\input.txt");
-        TreeSet<Integer> left = new TreeSet<>();
-        TreeSet<Integer> right = new TreeSet<>(); 
+        List<Integer> left = new ArrayList<>();
+        List<Integer> right = new ArrayList<>();
+        Map<Integer,Integer> multiplierCollection = new HashMap<>();
+        Integer rightNum;
         try{
             Scanner scan = new Scanner(file);
             while (scan.hasNextLine()) {
-                String[] ln = scan.nextLine().split("   ");
+                String[] ln = scan.nextLine().split("\\s+");
                 left.add(Integer.valueOf(ln[0]));
-                right.add(Integer.valueOf(ln[1]));
+                rightNum =Integer.valueOf(ln[1]);
+                right.add(rightNum);
+                multiplierCollection.merge(rightNum,1,Integer::sum);
                 
             }
         }
         catch (FileNotFoundException e){
             System.out.println(e.getMessage());
         }
-        Iterator<Integer> leftIt = left.iterator();
-        Iterator<Integer> rightIt = right.iterator();
+        Collections.sort(left);
+        Collections.sort(right);
         Integer totalDistance = 0;
-        Integer iterationCount = 0;
-        while (leftIt.hasNext() && rightIt.hasNext()) {
-            totalDistance += Math.abs(leftIt.next()-rightIt.next());
-            iterationCount ++;
+        Integer similarityScore = 0;
+        for (int i = 0; i < left.size(); i++) {
+            totalDistance += Math.abs(left.get(i)-right.get(i));
+            similarityScore += left.get(i)* multiplierCollection.getOrDefault(left.get(i), 0);
         }
-        
-
-        System.out.println(totalDistance);
-        System.out.println(iterationCount);
-        System.out.println(Integer.toString(right.size()));
+        System.out.println("Total Distance:"+Integer.toString(totalDistance)+" Similarity Score:"+Integer.toString(similarityScore));
     }
 }
